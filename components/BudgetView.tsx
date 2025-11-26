@@ -28,18 +28,18 @@ export const BudgetView: React.FC<BudgetViewProps> = ({ transactions }) => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row gap-6">
         {/* Fixed Expenses Card */}
-        <div className="flex-1 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div className="flex-1 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm transition-colors">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <div className="flex items-center gap-2 text-slate-500 mb-1">
+              <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-1">
                 <Calendar size={18} className="text-blue-500" />
                 <h3 className="font-medium text-sm">Despesas Fixas</h3>
               </div>
-              <p className="text-3xl font-bold text-slate-800">
+              <p className="text-3xl font-bold text-slate-800 dark:text-white">
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalFixed)}
               </p>
             </div>
-            <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
+            <div className="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-full text-xs font-bold">
               {fixedPercent.toFixed(0)}% do total
             </div>
           </div>
@@ -49,9 +49,9 @@ export const BudgetView: React.FC<BudgetViewProps> = ({ transactions }) => {
             {fixedExpenses.length > 0 ? (
               <ul className="space-y-2">
                 {fixedExpenses.map(t => (
-                  <li key={t.id} className="flex justify-between items-center text-sm border-b border-slate-50 pb-2 last:border-0">
-                    <span className="text-slate-600">{t.description}</span>
-                    <span className="font-medium text-slate-800">R$ {t.amount.toFixed(2)}</span>
+                  <li key={t.id} className="flex justify-between items-center text-sm border-b border-slate-50 dark:border-slate-700 pb-2 last:border-0">
+                    <span className="text-slate-600 dark:text-slate-300">{t.description}</span>
+                    <span className="font-medium text-slate-800 dark:text-slate-200">R$ {t.amount.toFixed(2)}</span>
                   </li>
                 ))}
               </ul>
@@ -62,18 +62,18 @@ export const BudgetView: React.FC<BudgetViewProps> = ({ transactions }) => {
         </div>
 
         {/* Variable Expenses Card */}
-        <div className="flex-1 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div className="flex-1 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm transition-colors">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <div className="flex items-center gap-2 text-slate-500 mb-1">
+              <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-1">
                 <ShoppingBag size={18} className="text-orange-500" />
                 <h3 className="font-medium text-sm">Despesas Variáveis</h3>
               </div>
-              <p className="text-3xl font-bold text-slate-800">
+              <p className="text-3xl font-bold text-slate-800 dark:text-white">
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalVariable)}
               </p>
             </div>
-            <div className="bg-orange-50 text-orange-700 px-3 py-1 rounded-full text-xs font-bold">
+            <div className="bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-3 py-1 rounded-full text-xs font-bold">
               {variablePercent.toFixed(0)}% do total
             </div>
           </div>
@@ -83,9 +83,9 @@ export const BudgetView: React.FC<BudgetViewProps> = ({ transactions }) => {
             {variableExpenses.length > 0 ? (
               <ul className="space-y-2">
                 {variableExpenses.map(t => (
-                  <li key={t.id} className="flex justify-between items-center text-sm border-b border-slate-50 pb-2 last:border-0">
-                    <span className="text-slate-600">{t.description}</span>
-                    <span className="font-medium text-slate-800">R$ {t.amount.toFixed(2)}</span>
+                  <li key={t.id} className="flex justify-between items-center text-sm border-b border-slate-50 dark:border-slate-700 pb-2 last:border-0">
+                    <span className="text-slate-600 dark:text-slate-300">{t.description}</span>
+                    <span className="font-medium text-slate-800 dark:text-slate-200">R$ {t.amount.toFixed(2)}</span>
                   </li>
                 ))}
               </ul>
@@ -97,7 +97,7 @@ export const BudgetView: React.FC<BudgetViewProps> = ({ transactions }) => {
       </div>
 
       {/* Total Card */}
-      <div className="bg-slate-800 text-white p-6 rounded-2xl shadow-sm flex items-center justify-between">
+      <div className="bg-slate-800 dark:bg-slate-950 text-white p-6 rounded-2xl shadow-sm flex items-center justify-between border border-transparent dark:border-slate-800">
         <div className="flex items-center gap-3">
           <div className="p-3 bg-white/10 rounded-full">
             <TrendingDown size={24} className="text-white" />
