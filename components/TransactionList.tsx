@@ -1,13 +1,14 @@
 import React from 'react';
-import { Trash2, TrendingUp, TrendingDown, User } from 'lucide-react';
+import { Trash2, TrendingUp, TrendingDown, User, Pencil } from 'lucide-react';
 import { Transaction } from '../types';
 
 interface TransactionListProps {
   transactions: Transaction[];
   onDelete: (id: string) => void;
+  onEdit: (transaction: Transaction) => void;
 }
 
-export const TransactionList: React.FC<TransactionListProps> = ({ transactions, onDelete }) => {
+export const TransactionList: React.FC<TransactionListProps> = ({ transactions, onDelete, onEdit }) => {
   // Sort by date descending
   const sorted = [...transactions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -66,13 +67,22 @@ export const TransactionList: React.FC<TransactionListProps> = ({ transactions, 
                   {t.type === 'expense' ? '-' : '+'} R$ {t.amount.toFixed(2)}
                 </td>
                 <td className="px-6 py-4 text-center">
-                  <button 
-                    onClick={() => onDelete(t.id)}
-                    className="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
-                    title="Excluir"
-                  >
-                    <Trash2 size={18} />
-                  </button>
+                  <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                    <button 
+                      onClick={() => onEdit(t)}
+                      className="p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-all"
+                      title="Editar"
+                    >
+                      <Pencil size={18} />
+                    </button>
+                    <button 
+                      onClick={() => onDelete(t.id)}
+                      className="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all"
+                      title="Excluir"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

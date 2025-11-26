@@ -51,6 +51,40 @@ export const transactionService = {
     } as Transaction;
   },
 
+  // Atualizar transação
+  async update(id: string, transaction: Partial<Omit<Transaction, 'id'>>) {
+    const updates: any = {
+      description: transaction.description,
+      amount: transaction.amount,
+      type: transaction.type,
+      category: transaction.category,
+      date: transaction.date,
+      is_fixed: transaction.isFixed,
+      family_member: transaction.user
+    };
+
+    // Remove undefined fields
+    Object.keys(updates).forEach(key => updates[key] === undefined && delete updates[key]);
+
+    const { data, error } = await supabase
+      .from('transactions')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Erro ao atualizar transação:', error);
+      throw error;
+    }
+
+    return {
+      ...data,
+      isFixed: data.is_fixed,
+      user: data.family_member
+    } as Transaction;
+  },
+
   // Deletar transação
   async delete(id: string) {
     const { error } = await supabase

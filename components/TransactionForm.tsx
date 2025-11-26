@@ -1,24 +1,28 @@
 import React, { useState } from 'react';
-import { Plus, X, User, Calculator } from 'lucide-react';
+import { Plus, X, User, Calculator, Save } from 'lucide-react';
 import { Category, CATEGORIES, Transaction, TransactionType, FamilyMember, FAMILY_MEMBERS } from '../types';
 
 interface TransactionFormProps {
   onAdd: (transaction: Omit<Transaction, 'id'>) => void;
+  onUpdate?: (id: string, transaction: Omit<Transaction, 'id'>) => void;
+  initialData?: Transaction | null;
   onClose: () => void;
 }
 
-export const TransactionForm: React.FC<TransactionFormProps> = ({ onAdd, onClose }) => {
-  const [description, setDescription] = useState('');
-  const [amount, setAmount] = useState('');
-  const [type, setType] = useState<TransactionType>('expense');
-  const [category, setCategory] = useState<Category>('Outros');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [isFixed, setIsFixed] = useState(false);
-  const [user, setUser] = useState<FamilyMember>('Casa');
+export const TransactionForm: React.FC<TransactionFormProps> = ({ onAdd, onUpdate, initialData, onClose }) => {
+  const [description, setDescription] = useState(initialData?.description || '');
+  const [amount, setAmount] = useState(initialData?.amount.toString() || '');
+  const [type, setType] = useState<TransactionType>(initialData?.type || 'expense');
+  const [category, setCategory] = useState<Category>(initialData?.category || 'Outros');
+  const [date, setDate] = useState(initialData?.date || new Date().toISOString().split('T')[0]);
+  const [isFixed, setIsFixed] = useState(initialData?.isFixed || false);
+  const [user, setUser] = useState<FamilyMember>(initialData?.user || 'Casa');
   
-  // States for installments
+  // States for installments (Only available when adding new)
   const [isInstallment, setIsInstallment] = useState(false);
   const [installments, setInstallments] = useState(2);
+
+  const isEditing = !!initialData;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +30,22 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onAdd, onClose
 
     const numericAmount = parseFloat(amount);
 
-    // Logic for Installments (Only for expenses)
+    // If editing, skip installment logic and just update
+    if (isEditing && initialData && onUpdate) {
+      onUpdate(initialData.id, {
+        description,
+        amount: numericAmount,
+        type,
+        category,
+        date,
+        isFixed,
+        user
+      });
+      onClose();
+      return;
+    }
+
+    // Logic for Installments (Only for new expenses)
     if (type === 'expense' && isInstallment && installments > 1) {
       const installmentValue = numericAmount / installments;
       
@@ -76,7 +95,9 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onAdd, onClose
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in max-h-[90vh] overflow-y-auto transition-colors">
         <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-700">
-          <h2 className="text-xl font-bold text-slate-800 dark:text-white">Nova Transação</h2>
+          <h2 className="text-xl font-bold text-slate-800 dark:text-white">
+            {isEditing ? 'Editar Transação' : 'Nova Transação'}
+          </h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
             <X size={24} />
           </button>
@@ -155,8 +176,8 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onAdd, onClose
             </div>
           </div>
 
-          {/* Installment Toggle (Only for Expenses) */}
-          {type === 'expense' && (
+          {/* Installment Toggle (Only for New Expenses) */}
+          {type === 'expense' && !isEditing && (
             <div className="bg-slate-50 dark:bg-slate-750 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
               <div className="flex items-center gap-2 mb-2">
                 <input 
@@ -248,8 +269,8 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onAdd, onClose
             type="submit"
             className="w-full mt-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
           >
-            <Plus size={20} />
-            {isInstallment ? `Gerar ${installments} Lançamentos` : 'Adicionar'}
+            {isEditing ? <Save size={20} /> : <Plus size={20} />}
+            {isEditing ? 'Salvar Alterações' : (isInstallment ? `Gerar ${installments} Lançamentos` : 'Adicionar')}
           </button>
         </form>
       </div>

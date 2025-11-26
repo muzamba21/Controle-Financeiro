@@ -14,6 +14,8 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedMember, setSelectedMember] = useState<FamilyMember | 'Todos'>('Todos');
   
@@ -65,6 +67,15 @@ function App() {
     }
   };
 
+  const handleUpdateTransaction = async (id: string, updates: Omit<Transaction, 'id'>) => {
+    try {
+      const updatedTransaction = await transactionService.update(id, updates);
+      setTransactions(prev => prev.map(t => t.id === id ? updatedTransaction : t));
+    } catch (err) {
+      alert('Erro ao atualizar transação. Tente novamente.');
+    }
+  };
+
   const handleDeleteTransaction = async (id: string) => {
     if (!confirm('Tem certeza que deseja excluir esta transação?')) return;
     
@@ -74,6 +85,16 @@ function App() {
     } catch (err) {
       alert('Erro ao excluir. Tente novamente.');
     }
+  };
+
+  const openEditModal = (transaction: Transaction) => {
+    setEditingTransaction(transaction);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingTransaction(null);
   };
 
   const getFilteredTransactions = () => {
@@ -242,6 +263,7 @@ function App() {
               <TransactionList 
                 transactions={filteredTransactions} 
                 onDelete={handleDeleteTransaction}
+                onEdit={openEditModal}
               />
             )}
           </div>
@@ -260,8 +282,10 @@ function App() {
       {/* Modal Overlay */}
       {isModalOpen && (
         <TransactionForm 
-          onAdd={handleAddTransaction} 
-          onClose={() => setIsModalOpen(false)} 
+          onAdd={handleAddTransaction}
+          onUpdate={handleUpdateTransaction}
+          initialData={editingTransaction}
+          onClose={handleCloseModal} 
         />
       )}
     </div>
