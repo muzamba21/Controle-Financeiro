@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, List, Plus, ChevronLeft, ChevronRight, Wallet, PieChart, Loader2, Users, Moon, Sun, LogOut } from 'lucide-react';
+import { LayoutDashboard, List, Plus, ChevronLeft, ChevronRight, Wallet, PieChart, Loader2, Users, Moon, Sun } from 'lucide-react';
 import { Transaction, FamilyMember, FAMILY_MEMBERS } from './types';
 import { Dashboard } from './components/Dashboard';
 import { TransactionList } from './components/TransactionList';
@@ -108,46 +108,44 @@ function App() {
   const NavItem = ({ view, icon: Icon, label }: { view: 'dashboard' | 'transactions' | 'budget', icon: any, label: string }) => (
     <button 
       onClick={() => setCurrentView(view)}
-      className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all w-full text-sm font-medium group relative overflow-hidden ${
+      className={`flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 px-2 md:px-4 py-2 md:py-3 rounded-xl transition-all w-full text-xs md:text-sm font-medium ${
         currentView === view 
-          ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' 
-          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
+          ? 'text-blue-600 dark:text-blue-400 md:bg-blue-50 md:dark:bg-blue-900/20' 
+          : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
       }`}
     >
-      <Icon size={20} className={currentView === view ? 'text-white' : ''} />
-      <span className="hidden md:inline">{label}</span>
-      {currentView === view && (
-        <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
-      )}
+      <Icon size={24} className={`mb-1 md:mb-0 ${currentView === view ? 'fill-current opacity-20 md:opacity-100 md:fill-none' : ''}`} />
+      <span>{label}</span>
     </button>
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 flex flex-col md:flex-row transition-colors duration-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col md:flex-row font-sans selection:bg-blue-100 dark:selection:bg-blue-900">
       
-      {/* Sidebar Navigation */}
-      <aside className="bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 w-full md:w-72 flex-shrink-0 flex flex-col fixed md:relative z-20 h-16 md:h-screen transition-colors duration-200">
-        <div className="p-4 md:p-8 flex items-center gap-3 md:mb-4">
-          <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-blue-500/20">
-            <Wallet size={24} />
+      {/* Desktop Sidebar (Left) */}
+      <aside className="hidden md:flex flex-col w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 h-screen sticky top-0 z-30">
+        <div className="p-8">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="bg-blue-600 p-2 rounded-lg text-white shadow-lg shadow-blue-500/30">
+              <Wallet size={24} />
+            </div>
+            <div>
+              <h1 className="font-bold text-lg leading-tight text-slate-800 dark:text-slate-100">Família da Liz</h1>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Gestão Financeira</p>
+            </div>
           </div>
-          <h1 className="text-sm font-bold text-slate-800 dark:text-white tracking-tight hidden md:block leading-tight">
-            Família da Liz<br/>
-            <span className="text-xs font-normal text-slate-500 dark:text-slate-400">Controle de Gastos</span>
-          </h1>
+          
+          <nav className="space-y-1">
+            <NavItem view="dashboard" icon={LayoutDashboard} label="Visão Geral" />
+            <NavItem view="budget" icon={PieChart} label="Orçamento" />
+            <NavItem view="transactions" icon={List} label="Extrato" />
+          </nav>
         </div>
-        
-        <nav className="flex-1 px-2 md:px-6 flex md:flex-col gap-1 md:gap-2 justify-around md:justify-start items-center md:items-stretch">
-          <NavItem view="dashboard" icon={LayoutDashboard} label="Dashboard" />
-          <NavItem view="budget" icon={PieChart} label="Orçamento" />
-          <NavItem view="transactions" icon={List} label="Transações" />
-        </nav>
 
-        {/* Sidebar Footer (Desktop) */}
-        <div className="hidden md:flex flex-col gap-4 p-6 border-t border-slate-100 dark:border-slate-700">
-          <button 
+        <div className="mt-auto p-6 border-t border-slate-100 dark:border-slate-800">
+           <button 
             onClick={() => setIsDarkMode(!isDarkMode)}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all w-full text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl w-full text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
             {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             <span>{isDarkMode ? 'Modo Claro' : 'Modo Escuro'}</span>
@@ -155,71 +153,83 @@ function App() {
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 p-4 md:p-8 mt-16 md:mt-0 overflow-y-auto h-screen scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600">
-        <div className="max-w-6xl mx-auto space-y-8 pb-24 md:pb-10">
-          
-          {/* Header Bar */}
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            
-            <div className="flex flex-wrap items-center justify-between md:justify-start gap-3 w-full md:w-auto">
-              {/* Mobile Theme Toggle */}
-              <button 
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className="md:hidden p-3 rounded-full bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shadow-sm"
-              >
-                {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
-
-              {/* Month Selector */}
-              <div className="flex items-center bg-white dark:bg-slate-800 rounded-full border border-slate-200 dark:border-slate-700 shadow-sm p-1 transition-colors">
-                <button onClick={() => changeMonth(-1)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-500 dark:text-slate-400">
-                  <ChevronLeft size={20} />
-                </button>
-                <div className="px-4 py-1 min-w-[140px] text-center font-semibold text-slate-800 dark:text-slate-100">
-                  {currentMonth.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
-                </div>
-                <button onClick={() => changeMonth(1)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-500 dark:text-slate-400">
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-
-              {/* Family Member Filter */}
-              <div className="relative group">
-                <div className="flex items-center bg-white dark:bg-slate-800 rounded-full border border-slate-200 dark:border-slate-700 shadow-sm px-4 py-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors">
-                  <Users size={16} className="text-slate-500 dark:text-slate-400 mr-2" />
-                  <select 
-                    value={selectedMember}
-                    onChange={(e) => setSelectedMember(e.target.value as FamilyMember | 'Todos')}
-                    className="bg-transparent border-none text-sm font-medium text-slate-700 dark:text-slate-200 focus:ring-0 cursor-pointer appearance-none pr-6 outline-none"
-                  >
-                    <option value="Todos" className="dark:bg-slate-800">Toda a Família</option>
-                    {FAMILY_MEMBERS.map(member => (
-                      <option key={member} value={member} className="dark:bg-slate-800">{member}</option>
-                    ))}
-                  </select>
-                  <ChevronRight size={14} className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-slate-400 pointer-events-none" />
-                </div>
-              </div>
+      {/* Mobile Top Bar */}
+      <header className="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-4 sticky top-0 z-30 flex items-center justify-between">
+         <div className="flex items-center gap-3">
+            <div className="bg-blue-600 p-2 rounded-lg text-white">
+              <Wallet size={20} />
             </div>
+            <h1 className="font-bold text-sm text-slate-800 dark:text-slate-100">Família da Liz</h1>
+          </div>
+          <button 
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className="p-2 text-slate-500 dark:text-slate-400"
+          >
+            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+      </header>
 
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 active:scale-95"
-            >
-              <Plus size={20} />
-              Nova Transação
-            </button>
+      {/* Main Content Area */}
+      <main className="flex-1 p-4 md:p-8 pb-24 md:pb-10 max-w-7xl mx-auto w-full">
+        <div className="space-y-6 md:space-y-8">
+          
+          {/* Filters & Actions Header */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              
+              {/* Controls Group */}
+              <div className="flex items-center gap-2 md:gap-4 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+                {/* Month Selector */}
+                <div className="flex items-center bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-1 shrink-0">
+                  <button onClick={() => changeMonth(-1)} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md transition-colors text-slate-500">
+                    <ChevronLeft size={18} />
+                  </button>
+                  <div className="px-3 min-w-[120px] text-center text-sm font-semibold text-slate-700 dark:text-slate-200">
+                    {currentMonth.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                  </div>
+                  <button onClick={() => changeMonth(1)} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md transition-colors text-slate-500">
+                    <ChevronRight size={18} />
+                  </button>
+                </div>
+
+                {/* Member Filter */}
+                <div className="relative shrink-0">
+                  <div className="flex items-center bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm px-3 py-2 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 transition-colors">
+                    <Users size={16} className="text-slate-400 mr-2" />
+                    <select 
+                      value={selectedMember}
+                      onChange={(e) => setSelectedMember(e.target.value as FamilyMember | 'Todos')}
+                      className="bg-transparent border-none text-sm font-medium text-slate-700 dark:text-slate-200 focus:ring-0 cursor-pointer appearance-none pr-6 outline-none py-0"
+                    >
+                      <option value="Todos" className="dark:bg-slate-800">Todos</option>
+                      {FAMILY_MEMBERS.map(member => (
+                        <option key={member} value={member} className="dark:bg-slate-800">{member}</option>
+                      ))}
+                    </select>
+                    <ChevronRight size={14} className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-slate-400 pointer-events-none" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Add Button */}
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 active:scale-95 w-full md:w-auto"
+              >
+                <Plus size={18} />
+                <span className="md:hidden">Adicionar Transação</span>
+                <span className="hidden md:inline">Nova Transação</span>
+              </button>
+            </div>
           </div>
 
           {error && (
              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-sm">
-               {error} <br/>
-               <span className="text-xs text-red-500 dark:text-red-400">Dica: Edite o arquivo services/supabaseClient.ts com suas chaves.</span>
+               {error}
              </div>
           )}
 
-          {/* Content Views */}
+          {/* Dynamic Content */}
           <div className="animate-fade-in">
             {currentView === 'dashboard' ? (
               <Dashboard 
@@ -238,7 +248,16 @@ function App() {
         </div>
       </main>
 
-      {/* Modal */}
+      {/* Mobile Bottom Navigation (Fixed) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-6 py-2 flex justify-between items-center z-40 safe-area-bottom">
+        <NavItem view="dashboard" icon={LayoutDashboard} label="Início" />
+        <div className="w-px h-8 bg-slate-100 dark:bg-slate-800"></div>
+        <NavItem view="budget" icon={PieChart} label="Orçamento" />
+        <div className="w-px h-8 bg-slate-100 dark:bg-slate-800"></div>
+        <NavItem view="transactions" icon={List} label="Extrato" />
+      </nav>
+
+      {/* Modal Overlay */}
       {isModalOpen && (
         <TransactionForm 
           onAdd={handleAddTransaction} 
